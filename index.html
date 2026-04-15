@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Syllabus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface-hover: #fafaf7;
+    --border: #e2ddd5;
+    --border-strong: #c8c2b8;
+    --text: #1c1a17;
+    --text-muted: #6b6560;
+    --text-faint: #a09c96;
+    --easy: #1a7a50;
+    --easy-bg: #e8f5ee;
+    --easy-mid: #0f5c3a;
+    --medium: #9a5e00;
+    --medium-bg: #fdf0d8;
+    --medium-mid: #7a4a00;
+    --accent: #2a2520;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 40px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .course-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    align-items: center;
+  }
+
+  .meta-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    letter-spacing: .02em;
+  }
+
+  .legend {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    display: flex;
+    height: 3px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 20px;
+    gap: 2px;
+  }
+
+  .prog-seg {
+    flex: 1;
+    border-radius: 2px;
+    transition: opacity .2s;
+  }
+
+  /* Week cards */
+  .week-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .week-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .week-card:hover {
+    border-color: var(--border-strong);
+  }
+
+  .week-card.open {
+    border-color: var(--border-strong);
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+
+  .week-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .week-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: .02em;
+  }
+
+  .week-info { flex: 1; min-width: 0; }
+
+  .week-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .week-summary {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .week-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .badge-easy { background: var(--easy-bg); color: var(--easy); }
+  .badge-medium { background: var(--medium-bg); color: var(--medium); }
+
+  .chevron {
+    color: var(--text-faint);
+    font-size: 11px;
+    transition: transform .22s ease;
+    flex-shrink: 0;
+  }
+
+  .week-card.open .chevron { transform: rotate(90deg); }
+
+  /* Body */
+  .week-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .32s ease;
+  }
+
+  .week-body-inner {
+    padding: 0 18px 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  .body-summary {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+
+  /* Topics */
+  .section-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .topics-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 18px;
+  }
+
+  .topic-pill {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    letter-spacing: .01em;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 16px;
+  }
+
+  /* Session breakdown */
+  .session-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .session-row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .s-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding-top: 1px;
+  }
+
+  .s-content {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .s-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+
+  /* Expand all button */
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+  }
+
+  .ctrl-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background .12s, border-color .12s;
+  }
+
+  .ctrl-btn:hover {
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 8px;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: .03em;
+  }
+
+  .footer-blocks {
+    display: flex;
+    gap: 3px;
+  }
+
+  .fb {
+    width: 18px;
+    height: 6px;
+    border-radius: 3px;
+    opacity: .5;
+  }
+
+  @media (max-width: 520px) {
+    .week-summary { display: none; }
+    .session-row { grid-template-columns: 1fr; gap: 2px; }
+    .s-label { margin-bottom: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="course-label">Course Curriculum</div>
+    <div class="header-top">
+      <h1>JavaScript<br>Syllabus</h1>
+    </div>
+    <div class="header-meta">
+      <span class="meta-pill">10 weeks</span>
+      <span class="meta-pill">80 min / session</span>
+      <span class="meta-pill">Easy → Medium</span>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--easy)"></div>Easy (wk 1–6)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--medium)"></div>Medium (wk 7–10)</div>
+    </div>
+    <div class="progress-bar" id="prog-bar"></div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="toggle-all">Expand all</button>
+  </div>
+
+  <div class="week-list" id="week-list"></div>
+
+  <div class="footer">
+    <span class="footer-text">JavaScript · 10-week course</span>
+    <div class="footer-blocks" id="footer-blocks"></div>
+  </div>
+
+</div>
+
+<script>
+const weeks = [
+  {
+    n:1, level:"easy", title:"Introduction to JavaScript",
+    summary:"What JS is, where it runs, and how to write your first lines of code.",
+    topics:["What is JS?","Script tags","console.log","Comments","DevTools console"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Open the browser console and type a few expressions. What happens?"},
+      {label:"Lecture",   time:"20 min", content:"History of JS, how the browser executes scripts, linking a .js file to HTML."},
+      {label:"Live demo", time:"15 min", content:"Live code: printing messages, doing arithmetic, introducing errors intentionally."},
+      {label:"Practice",  time:"30 min", content:"Students write a script that logs their name, age, and a calculation."},
+      {label:"Wrap-up",   time:"5 min",  content:"Q&A, preview next week."}
+    ]
+  },
+  {
+    n:2, level:"easy", title:"Variables & Data Types",
+    summary:"Storing values with var, let, and const; the primitive types JS offers.",
+    topics:["var / let / const","string","number","boolean","null & undefined","typeof"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Quiz: predict the output of a few typeof expressions."},
+      {label:"Lecture",   time:"20 min", content:"Declaration vs. assignment, block scope intro, when to use const vs let."},
+      {label:"Live demo", time:"15 min", content:"Live code: declaring variables, type coercion surprises ('5' + 3)."},
+      {label:"Practice",  time:"30 min", content:"Students build a 'personal card' script using variables for all their info."},
+      {label:"Wrap-up",   time:"5 min",  content:"Common mistakes recap."}
+    ]
+  },
+  {
+    n:3, level:"easy", title:"Operators & Expressions",
+    summary:"Arithmetic, comparison, and logical operators — the building blocks of logic.",
+    topics:["Arithmetic ops","Comparison (=== vs ==)","Logical &&, ||, !","Ternary operator","Template literals"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"True or false: live guessing on comparison expressions."},
+      {label:"Lecture",   time:"20 min", content:"Operator precedence, strict vs loose equality, short-circuit evaluation."},
+      {label:"Live demo", time:"15 min", content:"Live code: a simple discount calculator using ternary."},
+      {label:"Practice",  time:"30 min", content:"Build an expression evaluator: given two numbers, print which is larger and their sum/diff/product."},
+      {label:"Wrap-up",   time:"5 min",  content:"Recap operator pitfalls."}
+    ]
+  },
+  {
+    n:4, level:"easy", title:"Control Flow — Conditionals",
+    summary:"Making decisions in code with if/else and switch.",
+    topics:["if / else if / else","switch / case","Truthy & falsy values","Nested conditions"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Flowchart challenge: trace a decision tree by hand."},
+      {label:"Lecture",   time:"20 min", content:"How JS evaluates conditions, when to prefer switch over if-chains."},
+      {label:"Live demo", time:"15 min", content:"Live code: a grade classifier (A/B/C/D/F)."},
+      {label:"Practice",  time:"30 min", content:"Students write a 'simple chatbot' that responds differently to several inputs."},
+      {label:"Wrap-up",   time:"5 min",  content:"Introduce the upcoming loops week."}
+    ]
+  },
+  {
+    n:5, level:"easy", title:"Loops & Iteration",
+    summary:"Repeating actions efficiently with for, while, and forEach.",
+    topics:["for loop","while loop","do…while","break & continue","forEach"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Manual loop simulation: students trace a loop on paper."},
+      {label:"Lecture",   time:"20 min", content:"Loop anatomy, infinite loop dangers, when each loop type fits."},
+      {label:"Live demo", time:"15 min", content:"Live code: FizzBuzz, then refactor with forEach."},
+      {label:"Practice",  time:"30 min", content:"Sum an array of numbers; find the largest value; print a multiplication table."},
+      {label:"Wrap-up",   time:"5 min",  content:"Recap and Q&A."}
+    ]
+  },
+  {
+    n:6, level:"easy", title:"Functions",
+    summary:"Defining reusable blocks of code, understanding scope, and returning values.",
+    topics:["Function declarations","Function expressions","Parameters & arguments","return","Scope","Arrow functions"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Name-that-function: given a description, students suggest a function name and signature."},
+      {label:"Lecture",   time:"20 min", content:"DRY principle, call stack concept, default parameters."},
+      {label:"Live demo", time:"15 min", content:"Live code: refactor a repeated block into a function."},
+      {label:"Practice",  time:"30 min", content:"Write a library of helper functions (clamp, isEven, capitalize)."},
+      {label:"Wrap-up",   time:"5 min",  content:"Tease closures for later."}
+    ]
+  },
+  {
+    n:7, level:"medium", title:"Arrays & Array Methods",
+    summary:"Working with ordered lists and the powerful built-in methods that manipulate them.",
+    topics:["Array creation & indexing","push / pop / shift / unshift","map","filter","reduce","find & some"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Predict the output of a map/filter chain."},
+      {label:"Lecture",   time:"20 min", content:"Mutating vs. non-mutating methods, chaining, callback functions."},
+      {label:"Live demo", time:"15 min", content:"Live code: transform a product list (filter in-stock, map to prices, reduce to total)."},
+      {label:"Practice",  time:"30 min", content:"Process a dataset of student scores: find average, top scorers, passing list."},
+      {label:"Wrap-up",   time:"5 min",  content:"Discuss immutability benefits."}
+    ]
+  },
+  {
+    n:8, level:"medium", title:"Objects & JSON",
+    summary:"Grouping related data with key-value pairs, and exchanging data with JSON.",
+    topics:["Object literals","Dot & bracket notation","Methods on objects","Destructuring","Spread operator","JSON.parse / stringify"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Object treasure hunt: given a nested object, find a value."},
+      {label:"Lecture",   time:"20 min", content:"Reference vs. value, shallow copy, real-world JSON examples (APIs)."},
+      {label:"Live demo", time:"15 min", content:"Live code: model a user profile, destructure it, convert to JSON."},
+      {label:"Practice",  time:"30 min", content:"Build a small inventory manager: add, update, and search items in an object."},
+      {label:"Wrap-up",   time:"5 min",  content:"Bridge to DOM and async topics ahead."}
+    ]
+  },
+  {
+    n:9, level:"medium", title:"DOM Manipulation",
+    summary:"Selecting HTML elements with JavaScript and making pages interactive.",
+    topics:["document.querySelector","innerHTML & textContent","classList","Event listeners","click, input, submit","Preventing default"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Spot the bug: broken event listener code on the projector."},
+      {label:"Lecture",   time:"20 min", content:"The DOM as a tree, event bubbling overview, separation of concerns."},
+      {label:"Live demo", time:"15 min", content:"Live code: a live character counter for a textarea."},
+      {label:"Practice",  time:"30 min", content:"Build a to-do list: add items, mark done, delete — all without page refresh."},
+      {label:"Wrap-up",   time:"5 min",  content:"Recap and tease async/fetch."}
+    ]
+  },
+  {
+    n:10, level:"medium", title:"Async JavaScript & Fetch",
+    summary:"Understanding asynchronous code with callbacks, Promises, and async/await.",
+    topics:["Sync vs async","setTimeout","Promises (.then / .catch)","async / await","fetch API","Handling errors"],
+    sessions:[
+      {label:"Warm-up",   time:"10 min", content:"Async order puzzle: predict console output of nested setTimeout calls."},
+      {label:"Lecture",   time:"20 min", content:"Event loop mental model, why async exists, Promise states."},
+      {label:"Live demo", time:"15 min", content:"Live code: fetch a public API, display results on the page."},
+      {label:"Practice",  time:"30 min", content:"Fetch data from a free API (e.g. JSONPlaceholder) and render a card list."},
+      {label:"Wrap-up",   time:"5 min",  content:"Course recap, what to learn next (frameworks, Node.js, TypeScript)."}
+    ]
+  }
+];
+
+// Build progress bar
+const prog = document.getElementById('prog-bar');
+weeks.forEach(w => {
+  const s = document.createElement('div');
+  s.className = 'prog-seg';
+  s.style.background = w.level === 'easy' ? '#1a7a50' : '#9a5e00';
+  s.style.opacity = '.35';
+  prog.appendChild(s);
+});
+
+// Build footer blocks
+const fb = document.getElementById('footer-blocks');
+weeks.forEach(w => {
+  const b = document.createElement('div');
+  b.className = 'fb';
+  b.style.background = w.level === 'easy' ? '#1a7a50' : '#9a5e00';
+  fb.appendChild(b);
+});
+
+// Build week cards
+const list = document.getElementById('week-list');
+
+weeks.forEach(w => {
+  const isEasy = w.level === 'easy';
+  const numBg = isEasy ? '#e8f5ee' : '#fdf0d8';
+  const numColor = isEasy ? '#1a7a50' : '#9a5e00';
+
+  const card = document.createElement('div');
+  card.className = 'week-card';
+  card.dataset.week = w.n;
+
+  card.innerHTML = `
+    <div class="week-header" role="button" tabindex="0" aria-expanded="false">
+      <div class="week-num" style="background:${numBg};color:${numColor}">${String(w.n).padStart(2,'0')}</div>
+      <div class="week-info">
+        <div class="week-title">${w.title}</div>
+        <div class="week-summary">${w.summary}</div>
+      </div>
+      <span class="week-badge ${isEasy ? 'badge-easy' : 'badge-medium'}">${isEasy ? 'Easy' : 'Medium'}</span>
+      <span class="chevron">▶</span>
+    </div>
+    <div class="week-body">
+      <div class="week-body-inner">
+        <p class="body-summary">${w.summary}</p>
+        <div class="section-title">Topics covered</div>
+        <div class="topics-row">${w.topics.map(t=>`<span class="topic-pill">${t}</span>`).join('')}</div>
+        <div class="divider"></div>
+        <div class="section-title">Session breakdown — 80 min</div>
+        <div class="session-grid">
+          ${w.sessions.map(s=>`
+            <div class="session-row">
+              <div class="s-label">${s.label} <span class="s-time">${s.time}</span></div>
+              <div class="s-content">${s.content}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const header = card.querySelector('.week-header');
+  const body = card.querySelector('.week-body');
+
+  function toggle() {
+    const open = card.classList.toggle('open');
+    header.setAttribute('aria-expanded', open);
+    body.style.maxHeight = open ? body.scrollHeight + 'px' : '0';
+  }
+
+  header.addEventListener('click', toggle);
+  header.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+
+  list.appendChild(card);
+});
+
+// Expand / collapse all
+const btn = document.getElementById('toggle-all');
+let allOpen = false;
+
+btn.addEventListener('click', () => {
+  allOpen = !allOpen;
+  btn.textContent = allOpen ? 'Collapse all' : 'Expand all';
+  document.querySelectorAll('.week-card').forEach(card => {
+    const header = card.querySelector('.week-header');
+    const body = card.querySelector('.week-body');
+    card.classList.toggle('open', allOpen);
+    header.setAttribute('aria-expanded', allOpen);
+    body.style.maxHeight = allOpen ? body.scrollHeight + 'px' : '0';
+  });
+});
+</script>
+</body>
+</html>
